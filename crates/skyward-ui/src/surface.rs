@@ -642,24 +642,9 @@ pub mod kms {
             // the mode's description carries is looked up among the choices
             // rather than written straight in, and a connector that does not
             // offer it is left as it is.
-            if layout.dsc {
-                let (id, _) = conn_props.get("dsc_mode")?;
-                req.add_property(conn.handle(), id, property::Value::UnsignedRange(enum_value(&card, id, "dsc_enabled")?));
-                if let Some(bpp) = layout.bpp {
-                    if let Ok((id, _)) = conn_props.get("bpp_mode") {
-                        let choice = enum_choice(&card, id, &["bpp_8", "bpp_10", "bpp_12"], bpp);
-                        if let Ok(choice) = choice {
-                            req.add_property(conn.handle(), id, property::Value::UnsignedRange(choice));
-                        }
-                    }
-                }
-            }
             // Frame starts are posted to the hardware: the driver's own
             // default on display hardware of this generation, and Android's
             // compositor sets the same.
-            if let Ok((id, _)) = conn_props.get("frame_trigger_mode") {
-                req.add_property(conn.handle(), id, property::Value::UnsignedRange(enum_value(&card, id, "posted_start")?));
-            }
             req.add_property(crtc, crtc_props.handle("MODE_ID")?, first);
             req.add_property(crtc, crtc_props.handle("ACTIVE")?, property::Value::Boolean(true));
             for &other in attached.iter().filter(|&&p| !candidates.iter().any(|c| c.0 == p)) {
